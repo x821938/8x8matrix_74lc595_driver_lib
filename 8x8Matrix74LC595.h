@@ -5,8 +5,8 @@
 
 class LedMatrix {
 public:
-	LedMatrix(uint16_t _drawingTime, uint8_t _blankingTime, uint8_t _latchPin, uint8_t _clockPin, uint8_t _dataPin); // SW SPI constructor
-	LedMatrix(uint16_t _drawingTime, uint8_t _blankingTime, uint8_t _latchPin); // HWSPI constructor
+	LedMatrix(uint16_t _drawingTime, uint16_t _blankingTime, uint8_t _latchPin, uint8_t _clockPin, uint8_t _dataPin); // SW SPI constructor
+	LedMatrix(uint16_t _drawingTime, uint16_t _blankingTime, uint8_t _latchPin); // HWSPI constructor
 	void showOnDisplay(byte _displayData[3][8]);
 	void clearDisplay(byte _displayData[3][8]);
 	void getLetterData(uint8_t letter, uint8_t color, byte displayData[3][8]);
@@ -19,7 +19,7 @@ private:
 	uint8_t currentDisplayLine = 0; // Whenever disp is updated this switches to the next line
 	bool drawing = true;			// If display is drawing pixels or blanking right now.
 	uint16_t drawingTime;			// Time in uS that each line should be on
-	uint8_t blankingTime;			// Time in uS that each line should be blanked/off
+	uint16_t blankingTime;			// Time in uS that each line should be blanked/off
 	uint32_t lastUpdate = micros();	
 	void rawDispLine(uint8_t col_r, uint8_t col_g, uint8_t col_b, uint8_t line);
 };

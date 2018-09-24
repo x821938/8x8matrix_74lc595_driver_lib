@@ -11,7 +11,7 @@
    wiht clock and data pin */
 #ifdef HWSPI
 #include <SPI.h>
-LedMatrix::LedMatrix(uint16_t _drawingTime, uint8_t _blankingTime, uint8_t _latchPin) {
+LedMatrix::LedMatrix(uint16_t _drawingTime, uint16_t _blankingTime, uint8_t _latchPin) {
 	latchPin = _latchPin;
 	drawingTime = _drawingTime;
 	blankingTime = _blankingTime;
@@ -19,7 +19,7 @@ LedMatrix::LedMatrix(uint16_t _drawingTime, uint8_t _blankingTime, uint8_t _latc
 	SPI.begin();
 }
 #else
-LedMatrix::LedMatrix(uint16_t _drawingTime, uint8_t _blankingTime, uint8_t _latchPin, uint8_t _clockPin, uint8_t _dataPin) {
+LedMatrix::LedMatrix(uint16_t _drawingTime, uint16_t _blankingTime, uint8_t _latchPin, uint8_t _clockPin, uint8_t _dataPin) {
 	latchPin = _latchPin;
 	clockPin = _clockPin;
 	dataPin = _dataPin;
@@ -34,7 +34,7 @@ LedMatrix::LedMatrix(uint16_t _drawingTime, uint8_t _blankingTime, uint8_t _latc
 
 
 /* Use this public method when you want to display something new.
-   You give this method a pointer to the 8x8 displaydata. */
+   You give this method a pointer to the 3x8 displaydata. */
 void LedMatrix::showOnDisplay(byte _displayData[3][8]) {
 	displayData = _displayData;
 }
@@ -66,8 +66,12 @@ void LedMatrix::getLetterData(uint8_t letter, uint8_t color, byte displayData[3]
 /* This public method should be called as often as possible from main loop. It keeps the display refreshed. 
    The content of 'displayData' is drawn on the display */
 void LedMatrix::refreshDisplay() {
-	uint32_t updateTime;
-	updateTime = drawing ? drawingTime : blankingTime;
+	static uint32_t updateTime;
+	//if (currentDisplayLine == 0) {
+	//	updateTime = drawingTime;
+	//} else {
+	//	updateTime = drawing ? drawingTime : blankingTime;
+	//}
 	if (micros() - lastUpdate > updateTime) {
 		if (drawing) { // If in drawing mode we need to prepare the current line for the display
 			uint8_t col_r = displayData[0][currentDisplayLine];
@@ -81,6 +85,9 @@ void LedMatrix::refreshDisplay() {
 		if (currentDisplayLine >= 8) {
 			currentDisplayLine = 0; // We start on first line after the last is reached
 			drawing = !drawing; // Toggle between drawing mode and blanking mode
+			updateTime = drawingTime;
+		} else {
+			updateTime = drawing ? drawingTime : blankingTime;
 		}
 		lastUpdate = micros();
 	}

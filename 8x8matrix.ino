@@ -30,7 +30,7 @@ byte RAINBOW[3][8] = { {	0b11111111,		// Line 1 - RED
 byte placeholder[3][8]; // This is used for ascii letters or random pixels.
 
 
-LedMatrix ledMatrix(500, 1000, 10); // Create matrix instance. display line on for 500uS, blanking for 1000uS, Pin for latching is D10.
+LedMatrix ledMatrix(100, 1000, 10); // Create matrix instance. display line on for 500uS, blanking for 1000uS, Pin for latching is D10.
 // LedMatrix ledMatrix(500, 1000, 10, 15, 16); // (With software SPI)
 
 
