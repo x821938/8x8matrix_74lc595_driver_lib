@@ -63,15 +63,23 @@ void LedMatrix::getLetterData(uint8_t letter, uint8_t color, byte displayData[3]
 
 
 
+/* Public Method. Change brightness with the ratio between drawingtime and blankingtime.
+   Both are given in microseconds. Total should be under 2000uS to make it flickerfree */
+void LedMatrix::adjustBrightness(uint16_t _drawingTime, uint16_t _blankingTime) {
+	drawingTime = _drawingTime;
+	blankingTime = _blankingTime;
+}
+
+
+
 /* This public method should be called as often as possible from main loop. It keeps the display refreshed. 
    The content of 'displayData' is drawn on the display */
 void LedMatrix::refreshDisplay() {
 	static uint32_t updateTime;
-	//if (currentDisplayLine == 0) {
-	//	updateTime = drawingTime;
-	//} else {
-	//	updateTime = drawing ? drawingTime : blankingTime;
-	//}
+	static uint32_t lastUpdate = micros();
+	static uint8_t currentDisplayLine = 0; // Whenever disp is updated this switches to the next line
+	static bool drawing = true;			// If display is drawing pixels or blanking right now.
+
 	if (micros() - lastUpdate > updateTime) {
 		if (drawing) { // If in drawing mode we need to prepare the current line for the display
 			uint8_t col_r = displayData[0][currentDisplayLine];
@@ -85,7 +93,7 @@ void LedMatrix::refreshDisplay() {
 		if (currentDisplayLine >= 8) {
 			currentDisplayLine = 0; // We start on first line after the last is reached
 			drawing = !drawing; // Toggle between drawing mode and blanking mode
-			updateTime = drawingTime;
+			updateTime = drawingTime; // Make sure the last line is OK
 		} else {
 			updateTime = drawing ? drawingTime : blankingTime;
 		}

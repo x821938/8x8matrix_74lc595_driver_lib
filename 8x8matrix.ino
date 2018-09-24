@@ -30,7 +30,7 @@ byte RAINBOW[3][8] = { {	0b11111111,		// Line 1 - RED
 byte placeholder[3][8]; // This is used for ascii letters or random pixels.
 
 
-LedMatrix ledMatrix(100, 1000, 10); // Create matrix instance. display line on for 500uS, blanking for 1000uS, Pin for latching is D10.
+LedMatrix ledMatrix(100, 0, 10); // Create matrix instance. display line on for 500uS, blanking for 1000uS, Pin for latching is D10.
 // LedMatrix ledMatrix(500, 1000, 10, 15, 16); // (With software SPI)
 
 
@@ -43,6 +43,7 @@ void setup() {
 
 void loop() {
 	static uint8_t color=1; // The color of letters shown on display.
+	static uint16_t blankingTime = 0;
 
 	ledMatrix.refreshDisplay(); // Constantly keep calling this to keep display updated.
 
@@ -58,6 +59,10 @@ void loop() {
 			ledMatrix.clearDisplay(placeholder);
 			ledMatrix.getLetterData(incomingByte, color, placeholder);
 			ledMatrix.showOnDisplay(placeholder);
+		} else if (incomingByte == '+') { // serial char '+' to change brightness of display
+			blankingTime += 100;
+			blankingTime = blankingTime > 800 ? 0 : blankingTime;
+			ledMatrix.adjustBrightness(100, blankingTime);
 		} else { // Any letter received will be printed on the display
 			ledMatrix.clearDisplay(placeholder);
 			ledMatrix.getLetterData(incomingByte, color, placeholder);

@@ -10,17 +10,15 @@ public:
 	void showOnDisplay(byte _displayData[3][8]);
 	void clearDisplay(byte _displayData[3][8]);
 	void getLetterData(uint8_t letter, uint8_t color, byte displayData[3][8]);
+	void adjustBrightness(uint16_t _drawingTime, uint16_t _blankingTime);
 	void refreshDisplay();
 private:
-	byte(*displayData)[8];			// A pointer to the 8x8 matrix that is currently displayed on the display.
-	uint8_t latchPin;				// Pin telling 74lc595
+	byte(*displayData)[8];			// A pointer to the 3x8 matrix that is currently displayed on the display.
+	uint8_t latchPin;				// Pin telling 74lc595 to listen for clk/data
 	uint8_t clockPin;				// Only used if not using HWSPI
 	uint8_t dataPin;				// Only used if not using HWSPI
-	uint8_t currentDisplayLine = 0; // Whenever disp is updated this switches to the next line
-	bool drawing = true;			// If display is drawing pixels or blanking right now.
 	uint16_t drawingTime;			// Time in uS that each line should be on
 	uint16_t blankingTime;			// Time in uS that each line should be blanked/off
-	uint32_t lastUpdate = micros();	
 	void rawDispLine(uint8_t col_r, uint8_t col_g, uint8_t col_b, uint8_t line);
 };
 
